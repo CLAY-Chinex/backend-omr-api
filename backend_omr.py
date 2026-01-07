@@ -291,37 +291,31 @@ class OMRProcessor:
         return respuestas
 
 
+# ... (código de la clase OMRProcessor arriba) ...
+
 # =============================================================================
 # API PÚBLICA (WRAPPER DE COMPATIBILIDAD)
 # =============================================================================
 
 def procesar_imagen_examen(ruta_imagen):
     """
-    Función puente que mantiene la compatibilidad con el código antiguo.
-    Instancia el nuevo procesador OMR y devuelve el formato esperado por el backend.
-    
-    Returns:
-        codigo_str (str): El código detectado o mensaje de error.
-        lista_final (list): Lista de respuestas ['A', '', 'C', ...] o vacía en error.
+    Función puente que instancia la clase y procesa.
     """
-    processor = OMRProcessor()
+    processor = OMRProcessor() # <--- Aquí se crea el 'processor' internamente
     
     # 1. Procesamiento de imagen
     exito, img_binaria, mensaje = processor.procesar_hoja_completa(ruta_imagen)
     
     if not exito:
-        logger.error(f"Fallo en procesamiento: {mensaje}")
-        return mensaje, [] # Ej: "ERROR_ANCLAS", []
+        # Nota: Usamos logging en lugar de print
+        logging.error(f"Fallo en procesamiento: {mensaje}") 
+        return mensaje, [] 
 
     # 2. Lectura de datos
     try:
         codigo_str, lista_respuestas = processor.analizar_examen(img_binaria)
-        
-        if codigo_str == "INVALIDO":
-            return "INVALIDO", []
-            
         return codigo_str, lista_respuestas
         
     except Exception as e:
-        logger.error(f"Error en análisis de datos: {e}")
+        logging.error(f"Error en análisis: {e}")
         return "ERROR_PROCESAMIENTO", []

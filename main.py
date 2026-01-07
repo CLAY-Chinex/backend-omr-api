@@ -37,6 +37,7 @@ async def procesar_examen(file: UploadFile = File(...)):
         
         # 3. Procesar con la lógica del backend actualizado
         # La función procesar_imagen_examen actúa como puente con tu clase OMRProcessor
+        # Llamar a la función, NO al objeto
         codigo_resultado, respuestas = backend_omr.procesar_imagen_examen(unique_filename)
         
         logger.info(f"Resultado procesamiento: {codigo_resultado}")
